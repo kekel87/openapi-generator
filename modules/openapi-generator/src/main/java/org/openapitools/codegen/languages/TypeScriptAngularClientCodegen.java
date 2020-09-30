@@ -42,7 +42,8 @@ public class TypeScriptAngularClientCodegen extends AbstractTypeScriptClientCode
 
     public static enum QUERY_PARAM_OBJECT_FORMAT_TYPE {dot, json, key};
 
-    private static final String DEFAULT_IMPORT_PREFIX = "./";
+    // private static final String DEFAULT_IMPORT_PREFIX = "./";
+    private static final String DEFAULT_IMPORT_PREFIX = "../";
 
     public static final String NPM_REPOSITORY = "npmRepository";
     public static final String WITH_INTERFACES = "withInterfaces";
@@ -393,7 +394,7 @@ public class TypeScriptAngularClientCodegen extends AbstractTypeScriptClientCode
                         insideCurly++;
 
                         // Add the more complicated component instead of just the brace.
-                        pathBuffer.append("${encodeURIComponent(String(");
+                        pathBuffer.append("${");
                         break;
                     case '}':
                         // We exited curly braces, so track that.
@@ -405,7 +406,7 @@ public class TypeScriptAngularClientCodegen extends AbstractTypeScriptClientCode
                         if (parameter != null && parameter.isDateTime) {
                             pathBuffer.append(".toISOString()");
                         }
-                        pathBuffer.append("))}");
+                        pathBuffer.append("}");
                         parameterName.setLength(0);
                         break;
                     default:
@@ -532,6 +533,9 @@ public class TypeScriptAngularClientCodegen extends AbstractTypeScriptClientCode
         if (name.length() == 0) {
             return "default.service";
         }
+        if (importMapping.containsKey(name)) {
+            return importMapping.get(name);
+        }
         return this.convertUsingFileNamingConvention(name) + serviceFileSuffix;
     }
 
@@ -548,7 +552,7 @@ public class TypeScriptAngularClientCodegen extends AbstractTypeScriptClientCode
         if (importMapping.containsKey(name)) {
             return importMapping.get(name);
         }
-        return DEFAULT_IMPORT_PREFIX + this.convertUsingFileNamingConvention(this.sanitizeName(name)) + modelFileSuffix;
+        return this.convertUsingFileNamingConvention(this.sanitizeName(name)) + modelFileSuffix;
     }
 
     @Override
@@ -556,7 +560,7 @@ public class TypeScriptAngularClientCodegen extends AbstractTypeScriptClientCode
         if (importMapping.containsKey(name)) {
             return importMapping.get(name);
         }
-        return modelPackage() + "/" + toModelFilename(name).substring(DEFAULT_IMPORT_PREFIX.length());
+        return DEFAULT_IMPORT_PREFIX + modelPackage() + "/" + toModelFilename(name);
     }
 
     public String getNpmRepository() {
@@ -591,7 +595,7 @@ public class TypeScriptAngularClientCodegen extends AbstractTypeScriptClientCode
         if (modelSuffix.length() > 0 && result.endsWith(modelSuffix)) {
             result = result.substring(0, result.length() - modelSuffix.length());
         }
-        String prefix = capitalize(this.modelNamePrefix);
+        String prefix = capitalize(DEFAULT_IMPORT_PREFIX + this.modelNamePrefix);
         String suffix = capitalize(this.modelNameSuffix);
         if (prefix.length() > 0 && result.startsWith(prefix)) {
             result = result.substring(prefix.length());

@@ -84,7 +84,7 @@ public class DefaultGenerator implements Generator {
     private Boolean generateApiDocumentation = null;
     private Boolean generateModelTests = null;
     private Boolean generateModelDocumentation = null;
-    private Boolean generateMetadata = true;
+    private Boolean generateMetadata = false;
     private String basePath;
     private String basePathWithoutHost;
     private String contextPath;

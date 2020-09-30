@@ -415,11 +415,12 @@ public abstract class AbstractTypeScriptClientCodegen extends DefaultCodegen imp
     public String getTypeDeclaration(Schema p) {
         if (ModelUtils.isArraySchema(p)) {
             Schema<?> items = getSchemaItems((ArraySchema) p);
-            return getSchemaType(p) + "<" + getTypeDeclaration(ModelUtils.unaliasSchema(this.openAPI, items)) + ">";
+            // return getSchemaType(p) + "<" + getTypeDeclaration(ModelUtils.unaliasSchema(this.openAPI, items)) + ">";
+            return getTypeDeclaration(ModelUtils.unaliasSchema(this.openAPI, items)) + "[]";
         } else if (ModelUtils.isMapSchema(p)) {
             Schema<?> inner = getSchemaAdditionalProperties(p);
             String nullSafeSuffix = getNullSafeAdditionalProps() ? " | undefined" : "";
-            return "{ [key: string]: " + getTypeDeclaration(ModelUtils.unaliasSchema(this.openAPI, inner)) + nullSafeSuffix  + "; }";
+            return "{ [key: string]: " + getTypeDeclaration(ModelUtils.unaliasSchema(this.openAPI, inner)) + nullSafeSuffix  + " }";
         } else if (ModelUtils.isFileSchema(p)) {
             return "any";
         } else if (ModelUtils.isBinarySchema(p)) {
@@ -435,7 +436,7 @@ public abstract class AbstractTypeScriptClientCodegen extends DefaultCodegen imp
         if (ModelUtils.isArraySchema(p)) {
             ArraySchema mp1 = (ArraySchema) p;
             inner = mp1.getItems();
-            return this.getSchemaType(p) + "<" + this.getParameterDataType(parameter, inner) + ">";
+            return this.getParameterDataType(parameter, inner) + "[]";
         } else if (ModelUtils.isMapSchema(p)) {
             inner = getAdditionalProperties(p);
             return "{ [key: string]: " + this.getParameterDataType(parameter, inner) + "; }";
